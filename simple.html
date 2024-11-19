@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TaskFlow</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.1/knockout-latest.js" integrity="sha512-2AL/VEauKkZqQU9BHgnv48OhXcJPx9vdzxN1JrKDVc4FPU/MEE/BZ6d9l0mP7VmvLsjtYwqiYQpDskK9dG8KBA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:ital,wght@0,300..800;1,300..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <style>
+    body {     
+      margin: 80px;
+      background: linear-gradient(90deg, #020221 0%, #100C45 35%, #B800B1 100%); 
+      text-align: center;
+      justify-items: center;
+      overflow: hidden;
+    }
+    
+    h1 {
+      color: aliceblue;
+      font-family: "Host Grotesk", sans-serif;
+      margin: 60px;
+    }
+
+    .task-container {
+      max-width: 500px;
+      margin: auto;
+    }
+
+    input[type="text"] {
+      width: 70%;
+      padding: 10px;
+      margin-right: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      padding: 10px 15px;
+      border: none;
+      background-color: #28a745;
+      color: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-top: 10px;
+    }
+
+    .task-text {
+      flex: 1;
+      margin-right: 20px;
+    }
+
+    .task-text.completed {
+      text-decoration: line-through;
+      color: #888;
+    }
+
+    .task-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .done {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .delete {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    p{
+      color: #fff;
+      font-family: "Host Grotesk", sans-serif;
+    }
+    
+    .logo{
+      font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      justify-items: left;
+      margin: 10px;
+      color: #B800B1;
+    }
+
+    .task-container h2 {
+  position: relative;
+  color: #000;
+  background: none; /* Remove mix-blend-mode effect */
+  overflow: hidden;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  padding: 2px 4px 6px;
+}
+
+.task-container h2::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    90deg,
+    #14ffe9 0%,
+    #ffc800 16.666%,
+    #ff00e0 33.333%,
+    #14ffe9 50%
+  );
+  background-size: 200%;
+  animation: move 1s linear infinite;
+  z-index: -1; /* Ensures text is on top of the background */
+}
+
+.task-container h2{
+  position: relative;
+  display: inline-block;
+  background: none;
+  z-index: 1; /* Keep text above the background animation */
+}
+
+@keyframes move {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 100% 0;
+  }
+}
+
+
+  </style>
+</head>
+<body class="logo">
+  <h2>TaskFlow :)</h2>
+  <p>Task Management App</p>
+  <div class="task-container">
+    <h2>Plan Your Daily Tasks, the easiest way.</h2>
+    <h1>Task Manager</h1>
+    <div>
+      <input type="text" placeholder="Add a new task" data-bind="value: newTask, valueUpdate: 'input'" />
+      <button data-bind="click: addTask, enable: newTask().trim() !== ''">Add</button>
+    </div>
+    <ul data-bind="foreach: tasks">
+      <li>
+        <span class="task-text" data-bind="text: title, css: { completed: isComplete }"></span>
+        <div class="task-actions">
+          <button class="done" data-bind="click: $parent.markAsDone, enable: !isComplete()">Mark as Done</button>
+          <button class="delete" data-bind="click: $parent.deleteTask">Delete</button>
+        </div>
+      </li>
+    </ul>
+    <p>
+      Completed Tasks: <span data-bind="text: completedCount"></span> </p>
+    <p>
+      Total Tasks: <span data-bind="text: tasks().length"></span>
+    </p>
+    <p>Pending Tasks: <span data-bind="text: pendingCount"></span></p>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/knockout@3.5.1/build/knockout.js"></script>
+  <script>
+    // Task Model
+    function Task(title) {
+      this.title = title;
+      this.isComplete = ko.observable(false);
+    }
+
+    // ViewModel
+    function TaskManagerViewModel() {
+      const self = this;
+
+      self.newTask = ko.observable('');
+      self.tasks = ko.observableArray([]);
+
+      // Add a new task
+      self.addTask = function () {
+        if (self.newTask().trim()) {
+          self.tasks.push(new Task(self.newTask().trim()));
+          self.newTask(''); // Clear input
+        }
+      };
+
+      // Mark a task as complete
+      self.markAsDone = function (task) {
+        task.isComplete(true);
+      };
+
+      // Delete a task
+      self.deleteTask = function (task) {
+        self.tasks.remove(task);
+      };
+
+      // Computed Observables
+      self.completedCount = ko.computed(function () {
+        return self.tasks().filter(task => task.isComplete()).length;
+      });
+
+      self.pendingCount = ko.computed(function () {
+        return self.tasks().length - self.completedCount();
+      });
+    }
+
+    // Apply Bindings
+    ko.applyBindings(new TaskManagerViewModel());
+  </script>
+</body>
+</html>
