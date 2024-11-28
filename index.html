@@ -155,23 +155,23 @@
     <h1>Task Manager</h1>
     <div>
       <input type="text" placeholder="Add a new task" data-bind="value: newTask, valueUpdate: 'input'" />
-      <button data-bind="click: addTask, enable: newTask().trim() !== ''">Add</button>
+      <button data-bind="click: addTask, enable: newTask().trim() !== ''">Add</button> <!--Click to add task and enables on entering input--> 
     </div>
     <ul data-bind="foreach: tasks">
       <li>
-        <span class="task-text" data-bind="text: title, css: { completed: isComplete }"></span>
+        <span class="task-text" data-bind="text: title, css: { completed: isComplete }"></span> <!--Sets task title and binds task completion function with task completed style--->
         <div class="task-actions">
-          <button class="done" data-bind="click: $parent.markAsDone, enable: !isComplete()">Mark as Done</button>
-          <button class="delete" data-bind="click: $parent.deleteTask">Delete</button>
+          <button class="done" data-bind="click: $parent.markAsDone, enable: !isComplete()">Mark as Done</button> <!---Implements markAsDone function--->
+          <button class="delete" data-bind="click: $parent.deleteTask">Delete</button> <!--Implements deleteTask function--->
         </div>
       </li>
     </ul>
     <p>
-      Completed Tasks: <span data-bind="text: completedCount"></span> </p>
+      Completed Tasks: <span data-bind="text: completedCount"></span> </p> <!---Prints completed tasks--->
     <p>
-      Total Tasks: <span data-bind="text: tasks().length"></span>
+      Total Tasks: <span data-bind="text: tasks().length"></span> <!----Prints total tasks--->
     </p>
-    <p>Pending Tasks: <span data-bind="text: pendingCount"></span></p>
+    <p>Pending Tasks: <span data-bind="text: pendingCount"></span></p> <!---Prints pending tasks--->
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/knockout@3.5.1/build/knockout.js"></script>
@@ -208,10 +208,11 @@
       };
 
       // Computed Observables
+      //Count completed tasks
       self.completedCount = ko.computed(function () {
         return self.tasks().filter(task => task.isComplete()).length;
       });
-
+      //Count pending tasks
       self.pendingCount = ko.computed(function () {
         return self.tasks().length - self.completedCount();
       });
