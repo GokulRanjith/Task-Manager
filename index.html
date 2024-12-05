@@ -81,6 +81,7 @@
     .done {
       background-color: #007bff;
       color: white;
+      margin-left: 10px;
     }
 
     .delete {
@@ -160,6 +161,8 @@
     <ul data-bind="foreach: tasks">
       <li>
         <span class="task-text" data-bind="text: title, css: { completed: isComplete }"></span> <!--Sets task title and binds task completion function with task completed style--->
+        <p id="myId"></p>
+
         <div class="task-actions">
           <button class="done" data-bind="click: $parent.markAsDone, enable: !isComplete()">Mark as Done</button> <!---Implements markAsDone function--->
           <button class="delete" data-bind="click: $parent.deleteTask">Delete</button> <!--Implements deleteTask function--->
@@ -196,6 +199,22 @@
           self.newTask(''); // Clear input
         }
       };
+  var date = new Date();
+  var dd = date.getDate();
+  var mm = date.getMonth() + 1;
+  var yyyy = date.getFullYear();
+  var hours = date.getHours();
+  var minutes = date.getMinutes();
+  var seconds = date.getSeconds();
+
+  hours = hours < 10 ? "0" + hours : hours;
+  minutes = minutes < 10 ? "0" + minutes : minutes;
+  seconds = seconds < 10 ? "0" + seconds : seconds;
+  var newDateTime = dd + "-" + mm + "-" + yyyy + " " + hours + ":" + minutes + ":" + seconds;
+
+  var p = document.getElementById("myId");
+  p.innerHTML = newDateTime;
+
 
       // Mark a task as complete
       self.markAsDone = function (task) {
