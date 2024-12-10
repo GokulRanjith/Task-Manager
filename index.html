@@ -195,7 +195,7 @@
       // Add a new task
       self.addTask = function () {
         if (self.newTask().trim()) {
-          self.tasks.push(new Task(self.newTask().trim()));
+          self.tasks.unshift(new Task(self.newTask().trim()));
           self.newTask(''); // Clear input
         }
       };
